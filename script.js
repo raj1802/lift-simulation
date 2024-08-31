@@ -8,6 +8,8 @@ let liftBusy = [];
 let requestedFloors = { up: new Set(), down: new Set() };
 
 function generateBuilding() {
+
+
     const errorMessage = document.getElementById('error-message');
     if (errorMessage) {
         errorMessage.remove();
@@ -22,7 +24,10 @@ function generateBuilding() {
         return;
     }
 
-    const building = document.getElementById('building');
+    const control= document.getElementById('control-panel');
+    control.innerHTML = '';
+
+    const building = document.getElementById('building');   
     building.innerHTML = '';
 
     liftState = Array(liftsCount).fill(1);
