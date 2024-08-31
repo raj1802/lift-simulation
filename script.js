@@ -74,7 +74,7 @@ function displayError(message) {
     const errorMessage = document.createElement('div');
     errorMessage.id = 'error-message';
     errorMessage.style.color = 'red';
-    errorMessage.style.marginTop = '10px';m
+    errorMessage.style.marginTop = '10px';
     errorMessage.innerText = message;
     controlPanel.appendChild(errorMessage);
 }
