@@ -20,7 +20,7 @@ function generateBuilding() {
 
     // Input validation
     if (isNaN(floorsCount) || isNaN(liftsCount) || floorsCount < 1 || liftsCount < 1 || floorsCount == 1) {
-        displayError('Please enter valid positive numbers above one for floors and lifts.');
+        displayError('Please enter valid positive numbers greater than 1 for both floors and lifts.');
         return;
     }
 
