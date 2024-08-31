@@ -1,5 +1,7 @@
 document.getElementById('generate').addEventListener('click', generateBuilding);
 
+
+// test
 let liftState = [];
 let pendingRequests = { up: [], down: [] };
 let liftBusy = [];
