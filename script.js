@@ -1,15 +1,12 @@
 document.getElementById('generate').addEventListener('click', generateBuilding);
 
-
-// test
 let liftState = [];
 let pendingRequests = { up: [], down: [] };
 let liftBusy = [];
 let requestedFloors = { up: new Set(), down: new Set() };
+let liftDirections = []; // To track each lift's current direction
 
 function generateBuilding() {
-
-
     const errorMessage = document.getElementById('error-message');
     if (errorMessage) {
         errorMessage.remove();
@@ -24,14 +21,15 @@ function generateBuilding() {
         return;
     }
 
-    const control= document.getElementById('control-panel');
+    const control = document.getElementById('control-panel');
     control.innerHTML = '';
 
-    const building = document.getElementById('building');   
+    const building = document.getElementById('building');
     building.innerHTML = '';
 
     liftState = Array(liftsCount).fill(1);
     liftBusy = Array(liftsCount).fill(false);
+    liftDirections = Array(liftsCount).fill(null); // Initialize lift directions as null
     requestedFloors = { up: new Set(), down: new Set() };
 
     // Create floors
@@ -107,17 +105,21 @@ function processNextRequest(direction) {
         const liftIndex = parseInt(lift.dataset.lift);
         const currentFloor = liftState[liftIndex];
         const isBusy = liftBusy[liftIndex];
+        const currentDirection = liftDirections[liftIndex];
         const distance = Math.abs(currentFloor - floor);
 
-        if (distance < minDistance && !isBusy) {
-            closestLift = lift;
-            minDistance = distance;
+        if (!isBusy && (currentDirection === direction || currentDirection === null)) {
+            if (distance < minDistance) {
+                closestLift = lift;
+                minDistance = distance;
+            }
         }
     });
 
     if (closestLift) {
         const liftIndex = parseInt(closestLift.dataset.lift);
         liftBusy[liftIndex] = true;
+        liftDirections[liftIndex] = direction;
         moveLift(closestLift, liftIndex, floor, targetY, direction);
     } else {
         pendingRequests[direction].push(floor);
@@ -148,6 +150,14 @@ function openDoors(lift, liftIndex, targetFloor, direction) {
         setTimeout(() => {
             closeDoors(lift, liftIndex, direction);
             requestedFloors[direction].delete(targetFloor);
+
+            // Check if there are requests in the same direction that the lift can pick up
+            if (requestedFloors[direction].size > 0) {
+                processNextRequest(direction);
+            } else {
+                liftDirections[liftIndex] = null; // Reset direction if no more requests in that direction
+            }
+
         }, 2500);
     }
 }
@@ -160,3 +170,4 @@ function closeDoors(lift, liftIndex, direction) {
     liftBusy[liftIndex] = false;
     setTimeout(() => processNextRequest(direction), 500);
 }
+
