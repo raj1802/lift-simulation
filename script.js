@@ -35,11 +35,26 @@ function generateBuilding() {
     // Create floors
     for (let i = 1; i <= floorsCount; i++) {
         const floor = document.createElement('div');
+        
         floor.className = 'floor';
         floor.dataset.floor = i;
 
+        const floorInfo = document.createElement('div');
+        floorInfo.className = 'floor-info';
+        
+        const floorNumber = document.createElement('div');
+        floorNumber.className = 'floor-number';
+        floorNumber.innerText = `Floor ${i}`; // Add floor name
+
+
+
+
+
         const floorButtons = document.createElement('div');
         floorButtons.className = 'floor-buttons';
+
+
+
 
         if (i !== floorsCount) {
             const upButton = document.createElement('button');
@@ -56,9 +71,14 @@ function generateBuilding() {
             downButton.onclick = () => requestLift(i, 'down');
             floorButtons.appendChild(downButton);
         }
-
-        floor.appendChild(floorButtons);
+        floorInfo.appendChild(floorButtons); // Append buttons first
+        floorInfo.appendChild(floorNumber); // Append floor name next
+        
+        floor.appendChild(floorInfo);
+       
         building.appendChild(floor);
+       
+        
     }
 
     // Create lifts
@@ -83,6 +103,13 @@ function displayError(message) {
 }
 
 function requestLift(floor, direction) {
+    const button = document.querySelector(`[data-floor="${floor}"] .${direction}`);
+    
+    // Change the button color to red when pressed
+    if (button) {
+        button.style.backgroundColor = 'red';
+    }
+
     if (requestedFloors[direction].has(floor)) {
         return;
     }
@@ -146,6 +173,12 @@ function moveLift(lift, liftIndex, targetFloor, targetY, direction) {
 function openDoors(lift, liftIndex, targetFloor, direction) {
     if (!lift.classList.contains('door-open')) {
         lift.classList.add('door-open');
+
+         // Reset the button color back to normal
+         const button = document.querySelector(`[data-floor="${targetFloor}"] .${direction}`);
+         if (button) {
+             button.style.backgroundColor = ''; // Reset to default color
+         }
 
         setTimeout(() => {
             closeDoors(lift, liftIndex, direction);
